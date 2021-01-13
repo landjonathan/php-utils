@@ -24,8 +24,9 @@ function get_field_from_post_or_option ($field, $post = null) {
 }
 
 /**
- * Try to return a field value an array of post IDs, returning the first if finds
- * @example get_field_from_cascade('info', [get_the_id(), 14, 522])
+ * Try to return a field value an array of post IDs, returning the first if finds.
+ *
+ * e.g. <code>get_field_from_cascade('info', [get_the_id(), 14, 522])</code>
  * @param string $field The field's name
  * @param int[] $posts Post id to use
  * @return mixed
@@ -34,4 +35,52 @@ function get_field_from_cascade ($field, $posts) {
   foreach ($posts as $id) {
     if (get_field($id)) return get_field($id);
   }
+
+  return false;
+}
+
+/**
+ * @param $link
+ * @return false|string
+ */
+function get_rich_link ($link) {
+  if ($link['link']) $link = $link['link'];
+  elseif ($link['rich_link']) $link = $link['rich_link'];
+
+  $label = $link['label'];
+  if ($type = $link['type']) {
+    switch ($type) {
+      case 'none':
+        return false;
+
+      case 'page':
+        $url = $link['page'];
+        if ($anchor = $link['anchor']) $url .= "#{$anchor}";
+        return "<a href='{$url}'>{$label}</a>";
+
+      case 'link':
+        $url = $link['url'];
+        $target = $link['new_tab'] ? "target='_blank'" : '';
+        return "<a href='{$url}' {$target}>{$label}</a>";
+
+      case 'file':
+        $url = $link['file'];
+        return "<a href='{$url}'>{$label}</a>";
+
+      case 'email':
+        $url = $link['address'];
+        if ($subject = urlencode($link['subject'])) $url .= "?subject={$subject}";
+        return "<a href='mailto:{$url}'>{$label}</a>";
+    }
+
+  } else {
+    $url = $link['is_page'] ? $link['page'] : $link['url'];
+    if ($anchor = $link['anchor']) $url .= "/#{$anchor}";
+
+    $target = $link['new_tab'] ? "target='_blank'" : '';
+
+    return "<a href='{$url}' {$target}>{$label}</a>";
+  }
+
+  return false;
 }
