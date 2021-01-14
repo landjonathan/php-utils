@@ -50,28 +50,31 @@ function get_rich_link ($link) {
   $label = $link['label'];
   if ($type = $link['type']) {
     switch ($type) {
-      case 'none':
-        return false;
-
       case 'page':
         $url = $link['page'];
+        if (!$url) break;
         if ($anchor = $link['anchor']) $url .= "#{$anchor}";
         return "<a href='{$url}'>{$label}</a>";
 
       case 'link':
         $url = $link['url'];
+        if (!$url) break;
         $target = $link['new_tab'] ? "target='_blank'" : '';
         return "<a href='{$url}' {$target}>{$label}</a>";
 
       case 'file':
         $url = $link['file'];
+        if (!$url) break;
         return "<a href='{$url}'>{$label}</a>";
 
       case 'email':
         $url = $link['address'];
+        if (!$url) break;
         if ($subject = urlencode($link['subject'])) $url .= "?subject={$subject}";
         return "<a href='mailto:{$url}'>{$label}</a>";
+
     }
+    return false;
 
   } else {
     $url = $link['is_page'] ? $link['page'] : $link['url'];
