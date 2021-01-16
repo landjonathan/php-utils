@@ -47,43 +47,35 @@ function get_rich_link ($link) {
   if ($link['link']) $link = $link['link'];
   elseif ($link['rich_link']) $link = $link['rich_link'];
 
-  $label = $link['label'];
-  if ($type = $link['type']) {
-    switch ($type) {
-      case 'page':
-        $url = $link['page'];
-        if (!$url) break;
-        if ($anchor = $link['anchor']) $url .= "#{$anchor}";
-        return "<a href='{$url}'>{$label}</a>";
+  $type = $link['type'];
+  switch ($type) {
+    case 'page':
+      $url = $link['page'];
+      if (!$url) break;
+      $label = $link['label'] ?: get_the_title(url_to_postid($url));
+      if ($anchor = $link['anchor']) $url .= "#{$anchor}";
+      return "<a href='{$url}'>{$label}</a>";
 
-      case 'link':
-        $url = $link['url'];
-        if (!$url) break;
-        $target = $link['new_tab'] ? "target='_blank'" : '';
-        return "<a href='{$url}' {$target}>{$label}</a>";
+    case 'link':
+      $url = $link['url'];
+      if (!$url) break;
+      $label = $link['label'] ?: $url;
+      $target = $link['new_tab'] ? "target='_blank'" : '';
+      return "<a href='{$url}' {$target}>{$label}</a>";
 
-      case 'file':
-        $url = $link['file'];
-        if (!$url) break;
-        return "<a href='{$url}'>{$label}</a>";
+    case 'file':
+      $url = $link['file'];
+      if (!$url) break;
+      $label = $link['label'] ?: $url;
+      return "<a href='{$url}'>{$label}</a>";
 
-      case 'email':
-        $url = $link['address'];
-        if (!$url) break;
-        if ($subject = urlencode($link['subject'])) $url .= "?subject={$subject}";
-        return "<a href='mailto:{$url}'>{$label}</a>";
+    case 'email':
+      $url = $link['address'];
+      if (!$url) break;
+      $label = $link['label'] ?: $url;
+      if ($subject = urlencode($link['subject'])) $url .= "?subject={$subject}";
+      return "<a href='mailto:{$url}'>{$label}</a>";
 
-    }
-    return false;
-
-  } else {
-    $url = $link['is_page'] ? $link['page'] : $link['url'];
-    if ($anchor = $link['anchor']) $url .= "/#{$anchor}";
-
-    $target = $link['new_tab'] ? "target='_blank'" : '';
-
-    return "<a href='{$url}' {$target}>{$label}</a>";
   }
-
   return false;
 }
