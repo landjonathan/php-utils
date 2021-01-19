@@ -41,9 +41,11 @@ function get_field_from_cascade ($field, $posts) {
 
 /**
  * @param $link
+ * @param string $class
+ * @param string $attrs
  * @return false|string
  */
-function get_rich_link ($link) {
+function get_rich_link ($link, $class = '', $attrs = '') {
   if ($link['link']) $link = $link['link'];
   elseif ($link['rich_link']) $link = $link['rich_link'];
 
@@ -54,27 +56,27 @@ function get_rich_link ($link) {
       if (!$url) break;
       $label = $link['label'] ?: get_the_title(url_to_postid($url));
       if ($anchor = $link['anchor']) $url .= "#{$anchor}";
-      return "<a href='{$url}'>{$label}</a>";
+      return "<a href='{$url}' class='{$class}' $attrs>{$label}</a>";
 
     case 'link':
       $url = $link['url'];
       if (!$url) break;
       $label = $link['label'] ?: $url;
       $target = $link['new_tab'] ? "target='_blank'" : '';
-      return "<a href='{$url}' {$target}>{$label}</a>";
+      return "<a href='{$url}' {$target} class='{$class}' $attrs>{$label}</a>";
 
     case 'file':
       $url = $link['file'];
       if (!$url) break;
       $label = $link['label'] ?: $url;
-      return "<a href='{$url}'>{$label}</a>";
+      return "<a href='{$url}' class='{$class}' $attrs>{$label}</a>";
 
     case 'email':
       $url = $link['address'];
       if (!$url) break;
       $label = $link['label'] ?: $url;
       if ($subject = urlencode($link['subject'])) $url .= "?subject={$subject}";
-      return "<a href='mailto:{$url}'>{$label}</a>";
+      return "<a href='mailto:{$url}' class='{$class}' $attrs>{$label}</a>";
 
   }
   return false;
