@@ -43,9 +43,10 @@ function get_field_from_cascade ($field, $posts) {
  * @param $link
  * @param string $class
  * @param string $attrs
+ * @param bool|string $inner_element
  * @return false|string
  */
-function get_rich_link ($link, $class = '', $attrs = '') {
+function get_rich_link ($link, $class = '', $attrs = '', $inner_element = false) {
   if ($link['link']) $link = $link['link'];
   elseif ($link['rich_link']) $link = $link['rich_link'];
 
@@ -55,6 +56,7 @@ function get_rich_link ($link, $class = '', $attrs = '') {
       $url = $link['page'];
       if (!$url) break;
       $label = $link['label'] ?: get_the_title(url_to_postid($url));
+      if ($inner_element) $label = "<{$inner_element}>{$label}</{$inner_element}>";
       if ($anchor = $link['anchor']) $url .= "#{$anchor}";
       return "<a href='{$url}' class='{$class}' $attrs>{$label}</a>";
 
@@ -62,6 +64,7 @@ function get_rich_link ($link, $class = '', $attrs = '') {
       $url = $link['url'];
       if (!$url) break;
       $label = $link['label'] ?: $url;
+      if ($inner_element) $label = "<{$inner_element}>{$label}</{$inner_element}>";
       $target = $link['new_tab'] ? "target='_blank'" : '';
       return "<a href='{$url}' {$target} class='{$class}' $attrs>{$label}</a>";
 
@@ -69,12 +72,14 @@ function get_rich_link ($link, $class = '', $attrs = '') {
       $url = $link['file'];
       if (!$url) break;
       $label = $link['label'] ?: $url;
+      if ($inner_element) $label = "<{$inner_element}>{$label}</{$inner_element}>";
       return "<a href='{$url}' class='{$class}' $attrs>{$label}</a>";
 
     case 'email':
       $url = $link['address'];
       if (!$url) break;
       $label = $link['label'] ?: $url;
+      if ($inner_element) $label = "<{$inner_element}>{$label}</{$inner_element}>";
       if ($subject = urlencode($link['subject'])) $url .= "?subject={$subject}";
       return "<a href='mailto:{$url}' class='{$class}' $attrs>{$label}</a>";
 
