@@ -10,12 +10,22 @@ function svg_or_img ($url, $alt = '', $attrs = []) {
   if (!$url) return '';
 
   if (strpos($url, 'svg')) {
-    return file_get_contents(str_replace('https','http', $url));
+    $contents = file_get_contents(str_replace('https', 'http', $url), true);
+    if ($contents) return $contents;
+//    else {
+//      $ch = curl_init();
+//      curl_setopt($ch, CURLOPT_URL, $url);
+//      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//      $contents = curl_exec($ch);
+//      curl_close($ch);
+//      if (curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200)
+//        return $contents;
+//    }
   }
 
   $attrs_string = '';
   foreach ($attrs as $attr => $val) {
-    $attrs_string .= $attr . "'$val' ";
+    $attrs_string .= $attr . "='$val' ";
   }
   return "<img src='$url' alt='{$alt}' $attrs_string>";
 }
