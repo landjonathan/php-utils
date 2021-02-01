@@ -10,17 +10,27 @@ function svg_or_img ($url, $alt = '', $attrs = []) {
   if (!$url) return '';
 
   if (strpos($url, 'svg')) {
-    $contents = file_get_contents(str_replace('https', 'http', $url), true);
+    // try plain URL
+    $contents = file_get_contents(str_replace('https', 'http', $url));
     if ($contents) return $contents;
-//    else {
-//      $ch = curl_init();
-//      curl_setopt($ch, CURLOPT_URL, $url);
-//      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//      $contents = curl_exec($ch);
-//      curl_close($ch);
-//      if (curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200)
-//        return $contents;
-//    }
+
+    // try stripping origin
+    $parsed_url = parse_url($url);
+    if ($parsed_url) {
+      $url = '.' . $parsed_url['path'];
+      $contents = file_get_contents($url);
+      if ($contents) return $contents;
+    }
+
+    // if all else fails, try curl
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $contents = curl_exec($ch);
+    curl_close($ch);
+      if (curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200)
+      return $contents;
   }
 
   $attrs_string = '';
