@@ -33,7 +33,7 @@ function get_field_from_post_or_option ($field, $post = null) {
  */
 function get_field_from_cascade ($field, $posts) {
   foreach ($posts as $id) {
-    if (get_field($id)) return get_field($id);
+    if (get_field($field, $id)) return get_field($field, $id);
   }
 
   return false;
