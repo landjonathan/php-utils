@@ -17,8 +17,12 @@ function svg_or_img ($url, $alt = '', $attrs = []) {
     // try stripping origin
     $parsed_url = parse_url($url);
     if ($parsed_url) {
-      $url = '.' . $parsed_url['path'];
-      $contents = file_get_contents($url);
+      $path = $parsed_url['path'];
+      $contents = file_get_contents($path);
+      if ($contents) return $contents;
+
+      $relative_path = '.' . $path;
+      $contents = file_get_contents($relative_path);
       if ($contents) return $contents;
     }
 
@@ -29,7 +33,7 @@ function svg_or_img ($url, $alt = '', $attrs = []) {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $contents = curl_exec($ch);
     curl_close($ch);
-      if (curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200)
+    if (curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200)
       return $contents;
   }
 
