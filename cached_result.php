@@ -11,8 +11,8 @@ require_once __DIR__ . '/log.php';
  * @return string Returns the result or an empty string
  */
 
-function cached_result ($filename = 'cached-result.json', $expiration = 60, $fetch_function, $directory = 'wp-content/uploads/cache', $log_to_console) {
-  if (!isset($log_to_console)) {
+function cached_result ($filename, $expiration, $fetch_function, $directory = 'wp-content/uploads/cache', $log_to_console = null) {
+  if ($log_to_console !== null) {
     /** @noinspection PhpTernaryExpressionCanBeReplacedWithConditionInspection */
     $log_to_console = function_exists('is_prod') ? is_prod() : false;
   }
